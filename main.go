@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"path/filepath"
 
 	"github.com/SStoyanov22/lenslocked/views"
 	"github.com/go-chi/chi/v5"
@@ -45,7 +46,13 @@ func errorHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	r := chi.NewRouter()
-	r.Get("/", homeHandler)
+
+	tpl, err := views.Parse(filepath.Join("templates", "home.gohtml"))
+	if err != nil {
+		panic(err)
+	}
+
+	r.Get("/", controllers.staticHandler(tpl))
 	r.Get("/contact", contactHandler)
 	r.Get("/faq", faqHandler)
 	r.NotFound(errorHandler)

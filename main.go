@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"path/filepath"
 
+	"github.com/SStoyanov22/lenslocked/controllers"
 	"github.com/SStoyanov22/lenslocked/views"
 	"github.com/go-chi/chi/v5"
 )
@@ -16,30 +16,6 @@ const (
 	//...
 )
 
-func executeTemplate(w http.ResponseWriter, filepath string) {
-	t, err := views.Parse(filepath)
-
-	if err != nil {
-		log.Printf("parsing template: %v", err)
-		http.Error(w, "There was an error parsing the template", http.StatusInternalServerError)
-		return
-	}
-
-	t.Execute(w, nil)
-}
-
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-	executeTemplate(w, "templates/home.gohtml")
-}
-
-func faqHandler(w http.ResponseWriter, r *http.Request) {
-	executeTemplate(w, "templates/faq.gohtml")
-}
-
-func contactHandler(w http.ResponseWriter, r *http.Request) {
-	executeTemplate(w, "templates/contact.gohtml")
-}
-
 func errorHandler(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "<h1>Page not Found</h1>", http.StatusNotFound)
 }
@@ -47,14 +23,15 @@ func errorHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	r := chi.NewRouter()
 
-	tpl, err := views.Parse(filepath.Join("templates", "home.gohtml"))
-	if err != nil {
-		panic(err)
-	}
+	r.Get("/", controllers.StaticHandler(
+		views.Must(views.Parse(filepath.Join("templates", "home.gohtml")))))
 
-	r.Get("/", controllers.staticHandler(tpl))
-	r.Get("/contact", contactHandler)
-	r.Get("/faq", faqHandler)
+	r.Get("/contact", controllers.StaticHandler(
+		views.Must(views.Parse(filepath.Join("templates", "contact.gohtml")))))
+
+	r.Get("/faq", controllers.StaticHandler(
+		views.Must(views.Parse(filepath.Join("templates", "faq.gohtml")))))
+
 	r.NotFound(errorHandler)
 	fmt.Println("Starting the server on :3000...")
 	http.ListenAndServe(":3000", r)

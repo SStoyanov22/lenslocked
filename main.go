@@ -29,10 +29,12 @@ func main() {
 	r.Get("/contact", controllers.StaticHandler(
 		views.Must(views.ParseFS(templates.FS, "contact.gohtml"))))
 
-	r.Get("/faq", controllers.StaticHandler(
+	r.Get("/faq", controllers.FAQ(
 		views.Must(views.ParseFS(templates.FS, "faq.gohtml"))))
 
 	r.NotFound(errorHandler)
 	fmt.Println("Starting the server on :3000...")
 	http.ListenAndServe(":3000", r)
+
+	fmt.Println("HA GAAAY!!!")
 }

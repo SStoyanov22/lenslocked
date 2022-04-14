@@ -12,8 +12,12 @@ type Users struct {
 }
 
 func (u Users) New(w http.ResponseWriter, r *http.Request) {
+	var data struct {
+		Email string
+	}
 
-	u.Templates.New.Execute(w, nil)
+	data.Email = r.FormValue("email")
+	u.Templates.New.Execute(w, data)
 }
 
 func (u Users) Create(w http.ResponseWriter, r *http.Request) {

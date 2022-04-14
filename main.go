@@ -33,6 +33,8 @@ func main() {
 	))
 	r.Get("/signup", usersController.New)
 
+	r.Post("/signup", usersController.Create)
+
 	r.NotFound(errorHandler)
 	fmt.Println("Starting the server on :3000...")
 	http.ListenAndServe(":3000", r)
